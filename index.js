@@ -1,41 +1,37 @@
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 3000;
+require("dotenv").config(); // โหลด environment variables
+const { Client, GatewayIntentBits } = require("discord.js");
 
-// Middleware เพื่อ parse JSON
-app.use(express.json());
-
-// Custom Status Endpoint
-app.get("/", (req, res) => {
-  res.json({
-    status: "online",
-    message: "Auto Responder is running!",
-    timestamp: new Date().toISOString(),
-  });
+// สร้าง Client
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
-// Auto Responder
-app.post("/webhook", (req, res) => {
-  const { message } = req.body;
+const TOKEN = process.env.DISCORD_TOKEN;
 
-  if (!message) {
-    return res.status(400).json({ error: "Message is required!" });
+// เมื่อบอทออนไลน์
+client.once("ready", () => {
+  console.log(`🚀 Logged in as ${client.user.tag}`);
+});
+
+// Command /revivechat
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+
+  // เช็กว่าข้อความคือ /revivechat
+  if (message.content === "/revivechat") {
+    // เช็กว่าเป็นแอดมินหรือไม่
+    if (!message.member.permissions.has("MentionEveryone")) {
+      return message.reply("❌ You dont have permission to use this command!");
+    }
+
+    // Mention @everyone
+    await message.channel.send("<@1324957617063465022> 🌟 Chat Revive!!");
   }
-
-  // ตัวอย่างการตอบกลับ
-  const response = {
-    received: message,
-    reply: "Hello! This is an automated response.",
-    timestamp: new Date().toISOString(),
-  };
-
-  console.log("Incoming message:", message);
-  console.log("Sending response:", response);
-
-  res.json(response);
 });
 
-// เปิดเซิร์ฟเวอร์
-app.listen(port, () => {
-  console.log(`🚀 Auto Responder running at http://localhost:${port}`);
-});
+// ล็อกอินบอท
+client.login(TOKEN);
