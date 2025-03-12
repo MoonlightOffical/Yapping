@@ -1,13 +1,13 @@
 {
-  "name": "autoresponder-bot",
+  "name": "discord-revive-bot",
   "version": "1.0.0",
-  "description": "Simple autoresponder bot",
+  "description": "A Discord bot to revive chat",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-  "discord.js": "^14.0.0",
-  "dotenv": "^16.0.0"
+    "discord.js": "^14.0.0",
+    "dotenv": "^16.0.0"
   }
 }
